@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  password     String
+  image        String   @default("")
+  platFormName String   @default("")
+  platFormId   String   @default("")
+  createdAt    DateTime @default(now())
+
+  // Define relations
+  sentRequests     RequestsUser[] @relation("sentRequests")
+  receivedRequests RequestsUser[] @relation("receivedRequests")
+}
+
+model RequestsUser {
+  id        Int      @id @default(autoincrement())
+  sender    User     @relation("sentRequests", fields: [userId], references: [id])
+  recipient User     @relation("receivedRequests", fields: [fromId], references: [id])
+  userId    Int
+  fromId    Int
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+
+  // Ensure uniqueness of requests between users
+  @@unique([userId, fromId])
+}
