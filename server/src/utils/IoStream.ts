@@ -13,7 +13,6 @@ function SocketFunction(server: http.Server) {
 
   io.on("connection", (socket: Socket) => {
     socket.on("userConnect", ({ email }) => {
-      console.log(email);
       EmailToId[email] = socket.id;
       IdToEmail[socket.id] = email;
     });
@@ -24,7 +23,23 @@ function SocketFunction(server: http.Server) {
       });
     });
 
+    // message
+    socket.on("sendMessage", ({ email, data }) => {
+      const socketId = EmailToId[email];
+      io.to(socketId).emit("getMessage", data);
+    });
+
+    // SendReacation
+    socket.on("sendReaction", ({ email, id, type, image }) => {
+      const socketId = EmailToId[email];
+      console.log(socketId);
+      io.to(socketId).emit("recieveReaction", { id, type, image });
+    });
+
     socket.on("disconnect", () => {
+      let email = EmailToId[socket.id];
+      delete IdToEmail[email];
+      delete EmailToId[socket.id];
       //   console.log("Socket disconnected:", socket.id);
     });
   });

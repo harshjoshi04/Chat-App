@@ -8,29 +8,40 @@ datasource db {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  name         String
-  email        String   @unique
-  password     String
-  image        String   @default("")
-  platFormName String   @default("")
-  platFormId   String   @default("")
-  createdAt    DateTime @default(now())
-
-  // Define relations
-  sentRequests     RequestsUser[] @relation("sentRequests")
+  id               Int            @id @default(autoincrement())
+  name             String
+  email            String         @unique
+  password         String
+  image            String         @default("")
+  platFormName     String         @default("")
+  createdAt        DateTime       @default(now())
+  platFormId       String         @default("")
+  receiverMessage  Messages[]     @relation("receiverMessage")
+  sendMessage      Messages[]     @relation("sendMessage")
   receivedRequests RequestsUser[] @relation("receivedRequests")
+  sentRequests     RequestsUser[] @relation("sentRequests")
 }
 
 model RequestsUser {
   id        Int      @id @default(autoincrement())
-  sender    User     @relation("sentRequests", fields: [userId], references: [id])
-  recipient User     @relation("receivedRequests", fields: [fromId], references: [id])
   userId    Int
   fromId    Int
-  status    String   @default("pending")
   createdAt DateTime @default(now())
+  status    String   @default("pending")
+  recipient User     @relation("receivedRequests", fields: [fromId], references: [id])
+  sender    User     @relation("sentRequests", fields: [userId], references: [id])
 
-  // Ensure uniqueness of requests between users
   @@unique([userId, fromId])
+}
+
+model Messages {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  fromId           Int
+  senderReaction   String   @default("")
+  receiverReaction String   @default("")
+  createdAt        DateTime @default(now())
+  message          String
+  receiverMessage  User     @relation("receiverMessage", fields: [fromId], references: [id])
+  senderMessage    User     @relation("sendMessage", fields: [userId], references: [id])
 }

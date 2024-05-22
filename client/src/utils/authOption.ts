@@ -47,11 +47,11 @@ export const authOption: NextAuthOptions = {
       }
       return true;
     },
+    async jwt({ token, user }) {
+      return token;
+    },
     async session({ user, session }) {
       return session;
-    },
-    async jwt({ token }) {
-      return token;
     },
   },
   session: {

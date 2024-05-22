@@ -7,6 +7,8 @@ const ApiRoute = {
   LOGIN: `${MAIN}/user/login`,
   PLATFORM: `${MAIN}/user/platform`,
   REQUEST: `${MAIN}/user/request`,
+  CONTACT: `${MAIN}/user/contact`,
+  MESSAGE: `${MAIN}/message/message`,
 };
 
 export default ApiRoute;

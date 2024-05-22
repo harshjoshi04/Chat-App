@@ -15,9 +15,11 @@ import useContact from "@/context/useContact";
 import { useSocket } from "@/provider/SocketProvider";
 import axios from "axios";
 import ApiRoute from "@/utils/apiRoute";
+import useRequest from "@/context/useRequest";
 
 const UserSection = () => {
   const { userData } = useUser();
+  const { onOpen: onRequestOpen } = useRequest();
   const { onOpen } = useContact();
   const [TotalRequest, setTotalRequest] = useState(0);
   const [isUpdate, setisUpdate] = useState(false);
@@ -51,7 +53,9 @@ const UserSection = () => {
           )}
         </p>
 
-        <Button className="uppercase text-sm">Accept</Button>
+        <Button className="uppercase text-sm" onClick={onRequestOpen}>
+          Accept
+        </Button>
       </div>
       <div className="bg-SecondColor border-y border-SecondColor px-4 py-5 flex items-center justify-between ">
         <p className="font-semibold">Add Contacts </p>

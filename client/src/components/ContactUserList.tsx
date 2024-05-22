@@ -5,10 +5,10 @@ import Avatar from "./Avatar";
 import Button from "./Button";
 import { useSocket } from "@/provider/SocketProvider";
 import { MdAccessTime } from "react-icons/md";
-import { IoMdPersonAdd } from "react-icons/io";
 import useUser from "@/context/useUser";
 import axios from "axios";
 import ApiRoute from "@/utils/apiRoute";
+import { LuUserCheck2, LuUserPlus } from "react-icons/lu";
 
 interface ContactUserListProp {
   item: User;
@@ -39,17 +39,24 @@ const ContactUserList: FC<ContactUserListProp> = ({ item }) => {
         <p className="text-xs text-white/45">{item?.email}</p>
       </div>
       {isStatus ? (
-        isStatus == "pending" && (
-          <Button className="py-2 px-3 bg-neutral-900/80">
-            <MdAccessTime />
-          </Button>
-        )
+        <>
+          {isStatus == "pending" && (
+            <Button className="py-2 px-3 bg-neutral-900/80">
+              <MdAccessTime size={18} />
+            </Button>
+          )}
+          {isStatus == "accept" && (
+            <Button className="py-2 px-3 bg-neutral-900/80">
+              <LuUserCheck2 size={18} />
+            </Button>
+          )}
+        </>
       ) : (
         <Button
           className="py-2 px-3 bg-neutral-900/80"
           onClick={() => handleSendRequest(item?.email)}
         >
-          <IoMdPersonAdd />
+          <LuUserPlus size={18} />
         </Button>
       )}
     </div>

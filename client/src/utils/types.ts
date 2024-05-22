@@ -15,3 +15,24 @@ export interface User {
   createdAt: string;
   status?: string;
 }
+
+export interface RequestType {
+  createdAt: string;
+  fromId: number;
+  id: number;
+  recipient: User | null;
+  status: string;
+  userId: number;
+}
+
+export interface MessageType {
+  id: number;
+  userId: number;
+  fromId: number;
+  senderReaction: string;
+  receiverReaction: string;
+  createdAt: string;
+  message: string;
+  receiverMessage?: User;
+  senderMessage?: User;
+}

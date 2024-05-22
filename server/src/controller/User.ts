@@ -2,7 +2,6 @@ import createHttpError from "http-errors";
 import asyncErrorHandler from "../utils/asyncHandler";
 import { Prisma } from "../server";
 import { HashPassword, VerifyPassword } from "../utils/HashPassword";
-import { User } from "@prisma/client";
 
 // Register User
 export const SigUpUser = asyncErrorHandler(async (req, res, next) => {
@@ -121,7 +120,7 @@ export const GetRequest = asyncErrorHandler(async (req, res, next) => {
   const { id } = req.params;
   if (!id) return next(createHttpError(404, "Id Must Be Required !"));
   const findRequest = await Prisma.requestsUser.findMany({
-    where: { userId: Number(id) },
+    where: { userId: Number(id), status: "pending" },
     include: {
       recipient: true,
     },
@@ -129,7 +128,45 @@ export const GetRequest = asyncErrorHandler(async (req, res, next) => {
 
   return res.json({
     status: "success",
-    count: findRequest?.filter((el) => el.status == "pending").length,
+    count: findRequest?.length,
     data: findRequest,
   });
+});
+
+// Handle Request
+export const HandleRequest = asyncErrorHandler(async (req, res, next) => {
+  const { id, status } = req.body;
+  if (!id) return next(createHttpError(404, "Id must be required !"));
+  let statusData = status ? "accept" : "reject";
+  await Prisma.requestsUser.update({
+    where: { id: Number(id) },
+    data: { status: statusData },
+  });
+  return res.json({
+    status: "success",
+    message: "Request Manage Successfully !",
+  });
+});
+
+// GetContact
+
+export const GetContact = asyncErrorHandler(async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) return next(createHttpError(404, "Id Must Be Required !"));
+
+  let RequestUser = await Prisma.requestsUser.findMany({
+    where: {
+      status: "accept",
+      OR: [{ userId: Number(id) }, { fromId: Number(id) }],
+    },
+    include: {
+      recipient: true,
+      sender: true,
+    },
+  });
+  const mainData = RequestUser.map((item) =>
+    item.userId != Number(id) ? item.sender : item.recipient
+  );
+
+  return res.json({ status: "success", data: mainData });
 });
