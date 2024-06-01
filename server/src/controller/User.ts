@@ -120,7 +120,7 @@ export const GetRequest = asyncErrorHandler(async (req, res, next) => {
   const { id } = req.params;
   if (!id) return next(createHttpError(404, "Id Must Be Required !"));
   const findRequest = await Prisma.requestsUser.findMany({
-    where: { userId: Number(id), status: "pending" },
+    where: { userId: id, status: "pending" },
     include: {
       recipient: true,
     },
@@ -139,7 +139,7 @@ export const HandleRequest = asyncErrorHandler(async (req, res, next) => {
   if (!id) return next(createHttpError(404, "Id must be required !"));
   let statusData = status ? "accept" : "reject";
   await Prisma.requestsUser.update({
-    where: { id: Number(id) },
+    where: { id: id },
     data: { status: statusData },
   });
   return res.json({
@@ -157,7 +157,7 @@ export const GetContact = asyncErrorHandler(async (req, res, next) => {
   let RequestUser = await Prisma.requestsUser.findMany({
     where: {
       status: "accept",
-      OR: [{ userId: Number(id) }, { fromId: Number(id) }],
+      OR: [{ userId: id }, { fromId: id }],
     },
     include: {
       recipient: true,
@@ -165,7 +165,7 @@ export const GetContact = asyncErrorHandler(async (req, res, next) => {
     },
   });
   const mainData = RequestUser.map((item) =>
-    item.userId != Number(id) ? item.sender : item.recipient
+    item.userId != id ? item.sender : item.recipient
   );
 
   return res.json({ status: "success", data: mainData });

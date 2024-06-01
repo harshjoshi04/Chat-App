@@ -9,8 +9,8 @@ export const SendMessage = asyncErrorHandler(async (req, res, next) => {
     return next(createHttpError(404, "All Field Must Be Required !"));
   const InsertData = await Prisma.messages.create({
     data: {
-      userId: Number(userId),
-      fromId: Number(fromId),
+      userId: userId,
+      fromId: fromId,
       message: message,
     },
     include: {
@@ -33,8 +33,8 @@ export const GetMessage = asyncErrorHandler(async (req, res, next) => {
   const FindMessage = await Prisma.messages.findMany({
     where: {
       OR: [
-        { userId: Number(userId), fromId: Number(fromId) },
-        { userId: Number(fromId), fromId: Number(userId) },
+        { userId: userId, fromId: fromId },
+        { userId: fromId, fromId: userId },
       ],
     },
     include: {
@@ -51,13 +51,13 @@ export const SetReaction = asyncErrorHandler(async (req, res, next) => {
     return next(createHttpError(404, "Id or Image Must Be Required !"));
   const mainData = type
     ? await Prisma.messages.update({
-        where: { id: Number(id) },
+        where: { id: id },
         data: {
           senderReaction: image,
         },
       })
     : await Prisma.messages.update({
-        where: { id: Number(id) },
+        where: { id: id },
         data: {
           receiverReaction: image,
         },
